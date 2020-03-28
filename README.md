@@ -6,7 +6,7 @@ A library for various statistical learning and inference methods.
 ## Optional: Create and source virtual environment
 
 Create a virtual environment for this library. Note that Python3 is the expected Python version.
-Replace <path to virtual env>, e.g., `~/envs/stat_utils`:
+Replace `<path to virtual env>` as needed, e.g., `~/envs/stat_utils`:
 
 `virtualenv --system-site-packages <path to virtual env>`
 
