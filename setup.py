@@ -11,7 +11,7 @@ requirements = [
 ]
 
 setup(name='stat-utils',
-      version='0.1.0',
+      version='0.1.1',
       description='A library for various statistical learning and inference methods.',
       author='Timothy Lee',
       author_email='timothyelee@cmu.edu',
