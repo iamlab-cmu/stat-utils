@@ -1,13 +1,20 @@
+import random
 import numpy as np
 
 import stat_utils
 
-# ---------------------------------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def test_bayes_linreg():
 
-    correct_thresh = 1.e-3
-    posterior_var_thresh = 3.e-5
+    # Set random seed. This ensures that the unit test won't fail improbably.
+    # If this test changes, manually re-run this for different seeds first.
+    random_seed = 7
+    random.seed(random_seed)
+    np.random.seed(random_seed)
+
+    correct_thresh = 1.e-2
+    posterior_var_thresh = 1.e-5
 
     # Load in ground truth test data.
     # Example adapted from:
@@ -17,7 +24,7 @@ def test_bayes_linreg():
     num_features = len(GT_params) - 1
 
     # Training observations in [-1, 1)
-    num_samples = 1000
+    num_samples = 10000
     train_data = np.random.rand(num_samples, num_features) * 2. - 1.
 
     # Generate true labels and corrupt with noise to get noisy train labels
@@ -44,5 +51,11 @@ def test_bayes_linreg():
                                                  noise_variance, init_variance)
 
     # Test function to ensure correct output
-    np.allclose(posterior_mean, GT_params, correct_thresh)
-    np.all(posterior_cov < posterior_var_thresh)
+    assert np.allclose(posterior_mean, GT_params,
+                       rtol=0., atol=correct_thresh), \
+        ("Expected each element of posterior_mean ({}) to be within {} of " + \
+         "GT_params ({}), but it is not.").format(posterior_mean,
+                                                  correct_thresh, GT_params)
+    assert np.all(posterior_cov < posterior_var_thresh), \
+        ("Expected all elements of posterior_cov to be less than {}, " + \
+         "but at least one element is not.").format(posterior_var_thresh)
