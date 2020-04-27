@@ -5,13 +5,7 @@ import stat_utils
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def test_bayes_linreg():
-
-    # Set random seed. This ensures that the unit test won't fail improbably.
-    # If this test changes, manually re-run this for different seeds first.
-    random_seed = 7
-    random.seed(random_seed)
-    np.random.seed(random_seed)
+def test_bayes_linreg(random_seed):
 
     correct_thresh = 1.e-2
     posterior_var_thresh = 1.e-5
