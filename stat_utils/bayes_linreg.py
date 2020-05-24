@@ -2,9 +2,10 @@ import numpy as np
 
 # ---------------------------------------------------------
 
-def bayes_linreg(train_data, train_labels,
-                 prior_mean, prior_covariance,
-                 noise_variance):
+
+def bayes_linreg(
+    train_data, train_labels, prior_mean, prior_covariance, noise_variance
+):
     """
     Bayes linear regression. Assumes the probability distribution is Gaussian.
     This model includes an intercept term, so num_params = num_features + 1,
@@ -39,38 +40,56 @@ def bayes_linreg(train_data, train_labels,
 
     # Input argument handling
     num_samples = train_data.shape[0]
-    assert num_samples == len(train_labels), \
-        "Expected train_labels to have length {}, but has length {}.".format(num_samples, len(train_labels))
+    assert num_samples == len(
+        train_labels
+    ), "Expected train_labels to have length {}, but has length {}.".format(
+        num_samples, len(train_labels)
+    )
 
     num_features = train_data.shape[1]
     num_params = num_features + 1
-    assert num_params == len(prior_mean), \
-        "Expected prior_mean to have length {}, but it has length {}.".format(num_params, len(prior_mean))
+    assert num_params == len(
+        prior_mean
+    ), "Expected prior_mean to have length {}, but it has length {}.".format(
+        num_params, len(prior_mean)
+    )
 
     prior_covariance = np.array(prior_covariance)
-    assert (num_params, num_params) == prior_covariance.shape, \
-        "Expected prior_covariance to have shape {}, but it has shape {}.".format((num_params, num_params), prior_covariance.shape)
+    assert (
+        num_params,
+        num_params,
+    ) == prior_covariance.shape, "Expected prior_covariance to have shape {}, but it has shape {}.".format(
+        (num_params, num_params), prior_covariance.shape
+    )
 
-    assert isinstance(noise_variance, float), \
-        "Expected \"noise_variance\" to be a float, but it is {}.".format(type(noise_variance))
-    noise_precision = 1./noise_variance
+    assert isinstance(
+        noise_variance, float
+    ), 'Expected "noise_variance" to be a float, but it is {}.'.format(
+        type(noise_variance)
+    )
+    noise_precision = 1.0 / noise_variance
 
     # Calculation of new covariance
-    design_matrix = np.hstack((train_data, np.ones((num_samples,1))))
+    design_matrix = np.hstack((train_data, np.ones((num_samples, 1))))
     prior_precision = np.linalg.inv(prior_covariance)
-    precision = prior_precision + noise_precision*np.matmul(np.transpose(design_matrix), design_matrix)
+    precision = prior_precision + noise_precision * np.matmul(
+        np.transpose(design_matrix), design_matrix
+    )
     covariance = np.linalg.inv(precision)
 
     # Calculation of new mean
-    mean = np.matmul(np.matmul(covariance, prior_precision), prior_mean) + \
-           noise_precision*np.matmul(covariance, np.matmul(np.transpose(design_matrix), train_labels))
+    mean = np.matmul(
+        np.matmul(covariance, prior_precision), prior_mean
+    ) + noise_precision * np.matmul(
+        covariance, np.matmul(np.transpose(design_matrix), train_labels)
+    )
 
     return mean, covariance
 
 
-def bayes_linreg_uninformed_prior(train_data, train_labels,
-                                  noise_variance,
-                                  init_variance=1.):
+def bayes_linreg_uninformed_prior(
+    train_data, train_labels, noise_variance, init_variance=1.0
+):
 
     """
     Bayes linear regression with an uninformed prior. Assumes the probability
@@ -105,13 +124,17 @@ def bayes_linreg_uninformed_prior(train_data, train_labels,
     """
 
     # Input argument handling
-    assert isinstance(init_variance, float), \
-        "Expected \"init_variance\" to be a float, but it is {}.".format(type(init_variance))
+    assert isinstance(
+        init_variance, float
+    ), 'Expected "init_variance" to be a float, but it is {}.'.format(
+        type(init_variance)
+    )
 
     num_features = train_data.shape[1]
     num_params = num_features + 1
     prior_mean = np.zeros(num_params)
-    prior_covariance = init_variance*np.eye(num_params)
-    mean, covariance = bayes_linreg(train_data, train_labels, prior_mean,
-                                    prior_covariance, noise_variance)
+    prior_covariance = init_variance * np.eye(num_params)
+    mean, covariance = bayes_linreg(
+        train_data, train_labels, prior_mean, prior_covariance, noise_variance
+    )
     return mean, covariance

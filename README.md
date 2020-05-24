@@ -1,4 +1,5 @@
 # stat-utils
+
 A library for various statistical learning and inference methods.
 
 # Installation
@@ -15,11 +16,19 @@ Activate the virtual environment:
 `source <path to virtual env>/bin/activate`
 
 ## Install package
+
 We use `-e` for editable mode (you may remove this option if you prefer):
 
 `pip install -e .`
 
-# Test
+## Test
+
 All unit tests should pass. Run unit tests through the following command:
 
 `pytest`
+
+# Other Notes
+
+This package uses `black` as the linter. If you update changes, please do the following prior to updates:
+
+`black .`
