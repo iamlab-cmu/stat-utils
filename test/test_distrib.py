@@ -56,3 +56,8 @@ def test_distrib(random_seed):
     assert np.allclose(uniform_mean, uniform_mean_GT, rtol=0.0, atol=correct_thresh), (
         "Expected uniform_mean ({}) to be within {} of {}, " + "but it is not."
     ).format(uniform_mean, correct_thresh, uniform_mean_GT)
+
+    # Test that sampling "None" returns None
+    assert (
+        stat_utils.sample_from_distrib(None) is None
+    ), "Expected that 'sample_from_distrib' for None is None, but it is not."
