@@ -99,6 +99,10 @@ def sample_from_distrib(distrib_input):
         # Assume it's a scalar
         sample = distrib_input
 
+    elif distrib_input is None:
+        # Sampling None returns None
+        sample = None
+
     else:
         raise NotImplementedError
 
