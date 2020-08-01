@@ -61,3 +61,25 @@ def test_distrib(random_seed):
     assert (
         stat_utils.sample_from_distrib(None) is None
     ), "Expected that 'sample_from_distrib' for None is None, but it is not."
+
+    # Test that strings evaluate correctly
+    e_scalar = stat_utils.Distrib({"type": "scalar", "value": "2*np.e"})
+    print(e_scalar)
+    print(repr(e_scalar))
+    sample_from_e_scalar = e_scalar.sample()
+    print(sample_from_e_scalar)
+    assert np.isclose(
+        sample_from_e_scalar, 2.0 * np.e
+    ), "Expected scalar string handling to work, but it does not."
+
+    pi_uniform_distrib = stat_utils.Distrib(
+        {"type": "uniform", "range": ["-np.pi", "np.pi"]}
+    )
+    print(pi_uniform_distrib)
+    print(repr(pi_uniform_distrib))
+    sample_from_pi_uniform_distrib = pi_uniform_distrib.sample()
+    print(sample_from_pi_uniform_distrib)
+    assert (
+        -np.pi <= sample_from_pi_uniform_distrib
+        and sample_from_pi_uniform_distrib <= np.pi
+    ), "Expected uniform string handling to work, but it does not."

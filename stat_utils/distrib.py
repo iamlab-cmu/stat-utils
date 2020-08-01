@@ -47,6 +47,18 @@ class Distrib:
     def type(self):
         return self._distrib_config["type"]
 
+    @staticmethod
+    def interpret_as_numeric(input):
+        if isinstance(input, str):
+            try:
+                input_as_numeric = eval(input)
+            except:
+                print('Could not interpret input "{}" as numeric.'.format(input))
+                raise RuntimeError
+        else:
+            input_as_numeric = input
+        return input_as_numeric
+
     def sample(self):
 
         if self.type() == "scalar":
@@ -54,7 +66,7 @@ class Distrib:
                 'Expected key "value" to exist in distribution config, '
                 + "but it does not."
             )
-            sample = self._distrib_config["value"]
+            sample = self.interpret_as_numeric(self._distrib_config["value"])
 
         elif self.type() == "uniform":
             assert "range" in self._distrib_config, (
@@ -69,8 +81,8 @@ class Distrib:
                 + "but it has length {}.".format(uniform_range_len)
             )
 
-            min_value = uniform_range[0]
-            max_value = uniform_range[1]
+            min_value = self.interpret_as_numeric(uniform_range[0])
+            max_value = self.interpret_as_numeric(uniform_range[1])
 
             assert min_value <= max_value, (
                 "Expected min_value ({}) to be less than or equal to max_value ({}), "
