@@ -1,4 +1,5 @@
 import numpy as np
+from omegaconf import DictConfig
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -9,7 +10,7 @@ class Distrib:
     def __init__(self, distrib_config):
 
         # Input argument handling
-        assert isinstance(distrib_config, dict), (
+        assert isinstance(distrib_config, (dict, DictConfig)), (
             'Expected "distrib_config" to be type dict, '
             + 'but it is type "{}".'.format(type(distrib_config))
         )
@@ -102,7 +103,7 @@ def sample_from_distrib(distrib_input):
     if isinstance(distrib_input, Distrib):
         sample = distrib_input.sample()
 
-    elif isinstance(distrib_input, dict):
+    elif isinstance(distrib_input, (dict, DictConfig)):
         # Assume it's a dict that defines a distribution
         distrib = Distrib(distrib_input)
         sample = distrib.sample()
