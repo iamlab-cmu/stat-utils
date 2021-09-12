@@ -3,7 +3,11 @@ from omegaconf import DictConfig
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-KNOWN_DISTRIB_TYPES = ["scalar", "uniform"]
+KNOWN_DISTRIB_TYPES = [
+    "scalar",
+    "uniform",
+    "piecewise-uniform",
+]
 
 
 class Distrib:
@@ -39,6 +43,15 @@ class Distrib:
         elif self.type() == "uniform":
             uniform_range = self._distrib_config["range"]
             distrib_str = "Uniform({}, {})".format(uniform_range[0], uniform_range[1])
+
+        elif self.type() == "piecewise-uniform":
+            uniform_ranges = self._distrib_config["ranges"]
+            distrib_str = "PiecewiseUniform[ "
+            for r, range in enumerate(uniform_ranges):
+                distrib_str += f"({range[0]}, {range[1]})"
+                if r != len(uniform_ranges) - 1:
+                    distrib_str += ", "
+            distrib_str += " ]"
 
         else:
             raise NotImplementedError
@@ -89,6 +102,23 @@ class Distrib:
                 "Expected min_value ({}) to be less than or equal to max_value ({}), "
                 + "but it is not."
             ).format(min_value, max_value)
+
+            sample = np.random.uniform(low=min_value, high=max_value)
+
+        elif self.type() == "piecewise-uniform":
+            # Sum probability densities
+            prob_densities = np.array([
+                1./(self.interpret_as_numeric(r[1]) - self.interpret_as_numeric(r[0]))
+                for r in self._distrib_config["ranges"]
+            ])
+            prob_density = np.sum(prob_densities)
+            cumulative_prob_density = np.hstack([0., np.cumsum(prob_densities)[:-1]])
+            selector = np.random.uniform(low=0., high=prob_density)
+            idx_distrib = np.where(selector >= cumulative_prob_density)[0][-1]
+
+            uniform_range_to_sample = self._distrib_config["ranges"][idx_distrib]
+            min_value = self.interpret_as_numeric(uniform_range_to_sample[0])
+            max_value = self.interpret_as_numeric(uniform_range_to_sample[1])
 
             sample = np.random.uniform(low=min_value, high=max_value)
 
