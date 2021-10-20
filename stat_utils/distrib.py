@@ -1,3 +1,4 @@
+import numbers
 import numpy as np
 from omegaconf import DictConfig
 
@@ -138,7 +139,7 @@ def sample_from_distrib(distrib_input):
         distrib = Distrib(distrib_input)
         sample = distrib.sample()
 
-    elif isinstance(distrib_input, float):
+    elif isinstance(distrib_input, numbers.Number):
         # Assume it's a scalar
         sample = distrib_input
 
