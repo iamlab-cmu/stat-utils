@@ -9,6 +9,7 @@ KNOWN_DISTRIB_TYPES = [
     "scalar",
     "uniform",
     "piecewise-uniform",
+    "discrete-uniform"
 ]
 
 
@@ -53,6 +54,13 @@ class Distrib:
                 distrib_str += f"({range[0]}, {range[1]})"
                 if r != len(uniform_ranges) - 1:
                     distrib_str += ", "
+            distrib_str += " ]"
+
+        elif self.type() == "discrete-uniform":
+            values = self._distrib_config["values"]
+            distrib_str = "DiscreteUniform[ "
+            for value in values:
+                distrib_str += f"{value}, "
             distrib_str += " ]"
 
         else:
@@ -123,6 +131,13 @@ class Distrib:
             max_value = self.interpret_as_numeric(uniform_range_to_sample[1])
 
             sample = np.random.uniform(low=min_value, high=max_value)
+
+        elif self.type() == "discrete-uniform":
+            assert "values" in self._distrib_config, (
+                'Expected key "values" to exist in distribution config, '
+                + "but it does not."
+            )
+            sample = np.random.choice(self._distrib_config["values"])
 
         else:
             raise NotImplementedError
