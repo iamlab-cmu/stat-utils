@@ -9,7 +9,8 @@ KNOWN_DISTRIB_TYPES = [
     "scalar",
     "uniform",
     "piecewise-uniform",
-    "discrete-uniform"
+    "discrete-uniform",
+    "normal"
 ]
 
 
@@ -62,6 +63,11 @@ class Distrib:
             for value in values:
                 distrib_str += f"{value}, "
             distrib_str += " ]"
+
+        elif self.type() == "normal":
+            mean = self._distrib_config["mean"]
+            cov = self._distrib_config["cov"]
+            distrib_str = f"Normal[{mean}, {cov}]"
 
         else:
             raise NotImplementedError
@@ -138,6 +144,15 @@ class Distrib:
                 + "but it does not."
             )
             sample = np.random.choice(self._distrib_config["values"])
+
+        elif self.type() == "normal":
+            assert "mean" in self._distrib_config and "cov" in self._distrib_config, (
+                'Expected key "mean" and "cov" to exist in distribution config, '
+                + "but it does not."
+            )
+            mean = self._distrib_config["mean"]
+            cov = self._distrib_config["cov"]
+            sample = np.random.multivariate_normal(mean, cov)
 
         else:
             raise NotImplementedError
